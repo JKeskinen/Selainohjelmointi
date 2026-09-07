@@ -31,9 +31,8 @@ const Statistics = (props) => {
     return (
       <p>No feedback given</p>
     )
-      
-  
   }
+
   {/* Table, eli taulukko, jonka sisällä tbody */}
   return (
     
@@ -51,7 +50,7 @@ const Statistics = (props) => {
 
 }
 
-
+//ANEKDOOTTILISTA [0-7]
 const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -65,6 +64,8 @@ const anecdotes = [
 
 
 
+//PÄÄOHJELMA
+
 const App = (props) => {
   console.log(props)
 
@@ -73,14 +74,9 @@ const App = (props) => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0) 
+
   // selected on näytettävän anekdootin indeksi anecdotes-taulukossa.
   const [selected, setSelected] = useState(0)
-  // Jokainen votes-taulukon alkio kuuluu saman indeksin anekdootille.
-  // Esimerkiksi votes[2] kertoo anecdotes[2]-anekdootin äänimäärän.
-  // Luodaan yksi nolla jokaiselle anekdootille, koska alussa ääniä ei ole.
-  const [votes, setVotes] = useState (Array(anecdotes.length).fill(0))
-
-
 
   const handleGoodClick = () => setGood(good + 1)
   const handleNeutralClick = () => setNeutral(neutral + 1)
@@ -92,20 +88,59 @@ const App = (props) => {
     setBad(0)
   }
 
+ 
 
+
+
+
+  // LUODAAN TYHJÄ TAULUKKO ÄÄNIÄ [0,0,0,0...]
+  // Jokainen votes-taulukon alkio kuuluu saman indeksin anekdootille.
+  // Esimerkiksi votes[2] kertoo anecdotes[2]-anekdootin äänimäärän.
+  // Luodaan yksi nolla jokaiselle anekdootille, koska alussa ääniä ei ole.
+  const [votes, setVotes] = useState (Array(anecdotes.length).fill(0))
+
+
+  // KÄSITELLÄÄN ANEKDOOTTIEN ÄÄNIMÄÄRIÄ PAINALLUKSIEN JÄLKEEN.
   const handleVotes = () => {
     const newVote = votes[selected] +1
     console.log("Vote given: ", anecdotes[selected], newVote)
-    // map luo uuden taulukon: vain valitun anekdootin ääni kasvaa.
+    // map käy läpi taulukon jokaisen alkion ja luo uuden taulukon: vain valitun anekdootin ääni kasvaa.
     setVotes(votes.map((vote, index) =>
     index === selected ? vote +1 : vote))
   }
 
+
+   // NÄYTETÄÄN ANEKDOOTTI JA NAPPIA KLIKKAAMALLA SIIRRYTÄÄN SEURAAVAAN. 
   const handleAnecdotes = () => {
     console.log("Anecdote: ", anecdotes[selected +1])
     // Siirrytään seuraavaan anekdoottiin ja palataan lopussa listan alkuun.
     setSelected((selected + 1) % anecdotes.length)
   }
+
+  //-----------------------------------------------------------------
+  // MÄÄRITELLÄÄN ENITEN ÄÄNIÄ SAANEET ANEKDOOTIT, JA VERTAILEMALLA
+  // ETSITÄÄN OIKEA ANEKDOOTTI JA SEN ÄÄNIMÄÄRÄ
+
+
+   // MÄÄRITELLÄÄN ENITEN ÄÄNIÄ SAANEEN ANEKDOOTIN INDEX FUNKTIOLLA 
+   // MATH.MAX(...KAIKISTA ÄÄNISTÄ)
+  const mostVotesIndex = votes.indexOf(Math.max(...votes))
+
+  // NYKYINEN TOP1 ANEKDOOTTI = KAIKISTA ANEKDOOTEISTA[ENITEN ÄÄNIÄ INDEX]
+  const currentTopAnecdote = anecdotes[mostVotesIndex]
+
+  // TOP1 ANEKDOOTIN ÄÄNIMÄÄRÄN MÄÄRITYS. ÄÄNIMÄÄRÄ[ENITEN ÄÄNIÄ INDEX]
+  const voteAmountOfTopAnecdote = votes[mostVotesIndex]
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -115,20 +150,24 @@ const App = (props) => {
       <button onClick={handleNeutralClick}>neutral</button>
       <button onClick={handleBadClick}>bad</button>
       <button onClick={handleReset}>reset</button>
-      <button onClick={handleAnecdotes}>next anecdote</button>
-      <button onClick={handleVotes}>vote</button>
 
+      <button onClick={handleAnecdotes}>next anecdote</button>
+      {/* ÄÄNESTYSNAPPI, JOKA LISÄÄ VALITTUNA OLEVALLE INDEKSILLE (SELECTED) YHDEN ÄÄNEN */}
+      <button onClick={handleVotes}>vote</button>
       <h2>statistics</h2>
-      
       {/* Props kuljettavat Appin state-arvot Statistics-komponentille. */}
       <Statistics good={good} neutral={neutral} bad={bad} /> 
-
       <div>
+
       {/* selected yhdistää näytettävän anekdootin ja sen äänimäärän. */}
       {anecdotes[selected]}
       <p>votes: {votes[selected]}</p>
     </div>
+
+
     <h2>Anecdote with most votes</h2>
+    <p>{currentTopAnecdote}</p>
+    <p>votes: {voteAmountOfTopAnecdote}</p>
     <div>
       
     </div>
