@@ -14,11 +14,15 @@ const StatisticLine = (props) => {
   )
 }
 
+
+
 const Statistics = (props) => {
   console.log(props)
+  // App välittää palautemäärät Statistics-komponentille propseina.
   const good = props.good
   const neutral = props.neutral
   const bad = props.bad
+  // Lasketaan yhteismäärä ja palautteiden tilastot.
   const all = props.good + props.neutral + props.bad
   const average = (good - bad) / all
   const positive = (good / all) * 100
@@ -48,15 +52,34 @@ const Statistics = (props) => {
 }
 
 
+const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
+    'The only way to go fast, is to go well.'
+  ]
+
+
 
 const App = (props) => {
   console.log(props)
 
 
-  // tallenna napit omaan tilaansa
+  // Jokainen palautepainike kasvattaa omaa state-arvoaan.
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const [bad, setBad] = useState(0) 
+  // selected on näytettävän anekdootin indeksi anecdotes-taulukossa.
+  const [selected, setSelected] = useState(0)
+  // Jokainen votes-taulukon alkio kuuluu saman indeksin anekdootille.
+  // Esimerkiksi votes[2] kertoo anecdotes[2]-anekdootin äänimäärän.
+  // Luodaan yksi nolla jokaiselle anekdootille, koska alussa ääniä ei ole.
+  const [votes, setVotes] = useState (Array(anecdotes.length).fill(0))
+
 
 
   const handleGoodClick = () => setGood(good + 1)
@@ -68,9 +91,22 @@ const App = (props) => {
     setNeutral(0)
     setBad(0)
   }
- 
 
-  
+
+  const handleVotes = () => {
+    const newVote = votes[selected] +1
+    console.log("Vote given: ", anecdotes[selected], newVote)
+    // map luo uuden taulukon: vain valitun anekdootin ääni kasvaa.
+    setVotes(votes.map((vote, index) =>
+    index === selected ? vote +1 : vote))
+  }
+
+  const handleAnecdotes = () => {
+    console.log("Anecdote: ", anecdotes[selected +1])
+    // Siirrytään seuraavaan anekdoottiin ja palataan lopussa listan alkuun.
+    setSelected((selected + 1) % anecdotes.length)
+  }
+
   return (
     <>
       <h2>give feedback</h2>
@@ -79,17 +115,26 @@ const App = (props) => {
       <button onClick={handleNeutralClick}>neutral</button>
       <button onClick={handleBadClick}>bad</button>
       <button onClick={handleReset}>reset</button>
+      <button onClick={handleAnecdotes}>next anecdote</button>
+      <button onClick={handleVotes}>vote</button>
 
       <h2>statistics</h2>
       
-      <Statistics good={good} neutral={neutral} bad={bad} />
-      
-      
+      {/* Props kuljettavat Appin state-arvot Statistics-komponentille. */}
+      <Statistics good={good} neutral={neutral} bad={bad} /> 
 
+      <div>
+      {/* selected yhdistää näytettävän anekdootin ja sen äänimäärän. */}
+      {anecdotes[selected]}
+      <p>votes: {votes[selected]}</p>
+    </div>
+    <h2>Anecdote with most votes</h2>
+    <div>
       
-    
+    </div>
     </>
   )
+
   
 }
 
