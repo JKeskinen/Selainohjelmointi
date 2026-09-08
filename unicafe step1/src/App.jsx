@@ -2,6 +2,8 @@ import { StrictMode } from 'react';
 import { useState } from 'react'
 
 
+// PALAUTESIVU, JOKA NÄYTTÄÄ ÄÄNIMÄÄRÄT. YHDISTETTY
+
 // Tulostaa tekstin ja arvon omiin td-sarakkeisiinsa taulukon riville (tr)
 const StatisticLine = (props) => {
   console.log(props)
@@ -90,25 +92,35 @@ const App = (props) => {
 
  
 
-
-
-
   // LUODAAN TYHJÄ TAULUKKO ÄÄNIÄ [0,0,0,0...]
   // Jokainen votes-taulukon alkio kuuluu saman indeksin anekdootille.
   // Esimerkiksi votes[2] kertoo anecdotes[2]-anekdootin äänimäärän.
   // Luodaan yksi nolla jokaiselle anekdootille, koska alussa ääniä ei ole.
   const [votes, setVotes] = useState (Array(anecdotes.length).fill(0))
+  
+  // LUODAAN ÄÄNIMÄÄRÄ LISTANA OHJEIDEN MUKAISESTI
+  const [votesCopy, setVotesCopy] = useState(
+    Array(anecdotes.length).fill(0)
+  )
 
 
   // KÄSITELLÄÄN ANEKDOOTTIEN ÄÄNIMÄÄRIÄ PAINALLUKSIEN JÄLKEEN.
   const handleVotes = () => {
     const newVote = votes[selected] +1
-    console.log("Vote given: ", anecdotes[selected], newVote)
+    console.log("MAP Vote given: ", anecdotes[selected], newVote)
     // map käy läpi taulukon jokaisen alkion ja luo uuden taulukon: vain valitun anekdootin ääni kasvaa.
     setVotes(votes.map((vote, index) =>
     index === selected ? vote +1 : vote))
   }
 
+  // Tehdään tehtävänmukaisesti listan kopiointi äänimääristä
+  const handleVotesCopy = () => {
+    const copy = [...votesCopy]
+    copy[selected] += 1
+    console.log ("LIST COPY Vote given: ",
+      anecdotes[selected], copy[selected])
+    setVotesCopy(copy)
+  }
 
    // NÄYTETÄÄN ANEKDOOTTI JA NAPPIA KLIKKAAMALLA SIIRRYTÄÄN SEURAAVAAN. 
   const handleAnecdotes = () => {
@@ -125,23 +137,19 @@ const App = (props) => {
    // MÄÄRITELLÄÄN ENITEN ÄÄNIÄ SAANEEN ANEKDOOTIN INDEX FUNKTIOLLA 
    // MATH.MAX(...KAIKISTA ÄÄNISTÄ)
   const mostVotesIndex = votes.indexOf(Math.max(...votes))
-
   // NYKYINEN TOP1 ANEKDOOTTI = KAIKISTA ANEKDOOTEISTA[ENITEN ÄÄNIÄ INDEX]
   const currentTopAnecdote = anecdotes[mostVotesIndex]
-
   // TOP1 ANEKDOOTIN ÄÄNIMÄÄRÄN MÄÄRITYS. ÄÄNIMÄÄRÄ[ENITEN ÄÄNIÄ INDEX]
   const voteAmountOfTopAnecdote = votes[mostVotesIndex]
 
+  // TOP1 ANEKDOOTIN ÄÄNIMÄÄRÄN LISTA
+  const mostVotesIndexCopy = votesCopy.indexOf(Math.max(...votesCopy))
+  const currentTopAnecdoteCopy = anecdotes[mostVotesIndexCopy]
+  const voteAmountOfTopAnecdoteLIST = votesCopy[mostVotesIndexCopy] 
 
 
 
-
-
-
-
-
-
-
+  {/* RETURN TEKSTIOSIO SIVUILLA*/}
   return (
     <>
       <h2>give feedback</h2>
@@ -154,6 +162,7 @@ const App = (props) => {
       <button onClick={handleAnecdotes}>next anecdote</button>
       {/* ÄÄNESTYSNAPPI, JOKA LISÄÄ VALITTUNA OLEVALLE INDEKSILLE (SELECTED) YHDEN ÄÄNEN */}
       <button onClick={handleVotes}>vote</button>
+      <button onClick={handleVotesCopy}>voteCopy</button>
       <h2>statistics</h2>
       {/* Props kuljettavat Appin state-arvot Statistics-komponentille. */}
       <Statistics good={good} neutral={neutral} bad={bad} /> 
@@ -162,12 +171,20 @@ const App = (props) => {
       {/* selected yhdistää näytettävän anekdootin ja sen äänimäärän. */}
       {anecdotes[selected]}
       <p>votes: {votes[selected]}</p>
+      {/* LISTAN äänimäärä (äänimäärä[selected]) */}
+      <p>votes LISTCOPY: {votesCopy[selected]}</p>
     </div>
 
 
-    <h2>Anecdote with most votes</h2>
+    <h2>Anecdote with most votes MAP</h2>
     <p>{currentTopAnecdote}</p>
-    <p>votes: {voteAmountOfTopAnecdote}</p>
+    {/* MAP-äänimäärä TOP1 anekdootille */}
+    <p>votes MAP: {voteAmountOfTopAnecdote}</p>
+
+    {/* Anekdoottilistan TOP1 äänimäärä LISTAN KOPIOINTI */}
+    <h2>Anecdote with most votes LIST</h2>
+    <p>{currentTopAnecdoteCopy}</p>
+    <p>TOP1 votes anecdote LIST: {voteAmountOfTopAnecdoteLIST}</p>
     <div>
       
     </div>
