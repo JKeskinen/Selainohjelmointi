@@ -8,13 +8,14 @@ const App = () => {
       number: 1234
     }
   ]) 
+  console.log('Persons', persons.map(p=> p.name))
   const [newName, setNewName] = useState('')
   
 
 
   const addPerson = (event) => {
     event.preventDefault()
-    //console.log('Persons', persons)
+    
 
     const nameExists = persons.some(
       person => person.name === newName
