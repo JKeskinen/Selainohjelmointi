@@ -4,12 +4,25 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas',
+      number: 1234
+    }
   ]) 
   const [newName, setNewName] = useState('')
+  
+
 
   const addPerson = (event) => {
     event.preventDefault()
+    //console.log('Persons', persons)
+
+    const nameExists = persons.some(
+      person => person.name === newName
+    )
+    if (nameExists){
+      window.alert(`${newName} exists`)
+        return
+    }
 
     const personObject = { name : newName }
     setPersons(persons.concat(personObject))
@@ -21,10 +34,6 @@ const App = () => {
   }
 
 
-    
-  
-  
-  
 
   return (
     <div>
@@ -41,7 +50,8 @@ const App = () => {
       <h2>Numbers</h2>
       <ul>
         {persons.map(person =>
-          <p key={person.name}>{person.name}</p>
+          <p key={person.name}>{person.name}</p> 
+          
         )}
       </ul>
       
