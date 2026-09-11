@@ -18,33 +18,45 @@ const App = () => {
 // Henkilön lisääminen puhelinluetteloon.
   const addPerson = (event) => {
     event.preventDefault()
+
+    {/* 
+    //Jos kaavio on tyhjä, ilmoitus. Tämä kohta on turha, koska input required alempana
+    if (newName.trim() === ''){
+      window.alert('EMPTY NAME!')
+      return
+    }
+    */}
+
     const nameExists = persons.some(
       person => person.name === newName
     )
+
     if (nameExists){
       window.alert(`${newName} is already added to phonebook`)
         return
     }
     // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
-    const personObject = { name : newName, number : newNumber }
-    //console.log('Person name: ', persons.map(p=> p.name), 'Person number: ', persons.map(s=> s.number))
-    // Tarkistus jos nimikenttä on tyhjä: tulee ponnahdusikkuna HUOMIO! Tarkista <form> required alempana! Nopeampi ratkaisu!
-    if (newName.trim() === ''){
-      window.alert('EMPTY NAME!')
-      return
+    const personObject = { 
+      name : newName, 
+      number : newNumber 
     }
+
+    // Luodaan uusi lista kopioimalla nykyiset henkilöt ja lisäämällä uusi henkilö
+    const newPersons = [...persons, personObject]
+    //console.log('Person name: ', persons.map(p=> p.name), 'Person number: ', persons.map(s=> s.number))
+     console.log('Persons:', newPersons.map(p=> p.name), 'Person number: ', newPersons.map( s=> s.number))
+   
     // Lisää henkilö listaan
-    setPersons(persons.concat(personObject))
+    //setPersons(persons.concat(personObject))
+    setPersons(newPersons)
     // ilmoitus
-    window.alert(`${newName} : ${newNumber} added to phonebook`)
+    //window.alert(`${newName} : ${newNumber} added to phonebook`)
     setNewName('')
     setNewNumber('')
-    
   }
 
 
- 
-
+    
   const handleNameChange = (event) => {
     setNewName(event.target.value)
     //console.log(event.target.value) 
@@ -52,6 +64,8 @@ const App = () => {
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
+
+
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
