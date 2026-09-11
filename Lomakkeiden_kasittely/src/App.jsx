@@ -43,6 +43,10 @@ const Persons = ({persons}) => {
   return(
     <table>
       <tbody>
+        <tr>
+          <td><strong>NAME</strong></td>
+          <td><strong>NUMBER</strong></td>
+        </tr>
         {persons.map(person =>(
           <tr key={person.name}>
             <td>{person.name}</td>
@@ -67,6 +71,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   
   
+  
 
 // Henkilön lisääminen puhelinluetteloon.
   const addPerson = (event) => {
@@ -84,6 +89,7 @@ const App = () => {
       person => person.name === newName
     )
 
+
     if (nameExists){
       window.alert(`${newName} is already added to phonebook`)
         return
@@ -97,7 +103,7 @@ const App = () => {
     // Luodaan uusi lista kopioimalla nykyiset henkilöt ja lisäämällä uusi henkilö
     const newPersons = [...persons, personObject]
     //console.log('Person name: ', persons.map(p=> p.name), 'Person number: ', persons.map(s=> s.number))
-     console.log('Persons:', newPersons.map(p=> p.name), 'Person number: ', newPersons.map( s=> s.number))
+    console.log('Persons:', newPersons.map(p=> p.name), 'Person number: ', newPersons.map( s=> s.number))
    
     // Lisää henkilö listaan
     //setPersons(persons.concat(personObject))
@@ -107,6 +113,8 @@ const App = () => {
     setNewName('')
     setNewNumber('')
   }
+  
+
 
 
     
@@ -132,6 +140,7 @@ const App = () => {
       return(
          nameMatch || numberMatch)
     })
+
   
     
   
@@ -152,7 +161,6 @@ const App = () => {
       handleNumberChange={handleNumberChange}
       addPerson={addPerson}
       />
-      
       <h3>Numbers</h3>
       <Persons persons={personToShow}/>
     </div>   
