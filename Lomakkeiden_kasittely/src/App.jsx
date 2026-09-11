@@ -1,6 +1,59 @@
 
 import { useState } from 'react'
 
+const Filter = ({searchTerm, handleSearchChange}) => (
+  <div>
+    Search by name or number:
+    <input
+    value={searchTerm}
+    onChange={handleSearchChange}
+    placeholder='search'
+    />
+  </div>
+)
+
+const PersonForm = ({
+  newName,
+  newNumber,
+  handleNameChange,
+  handleNumberChange,
+  addPerson
+}) => (
+  <form onSubmit={addPerson}>
+    <div>
+      name:
+      <input
+      value={newName}
+      required
+      onChange={handleNameChange}
+      />
+    </div>
+    <div>
+      number:
+      <input
+      value={newNumber}
+      onChange={handleNumberChange}
+      />
+    </div>
+    <button type='submit'>add</button>
+  </form>
+)
+
+const Persons = ({persons}) => {
+  return(
+    <table>
+      <tbody>
+        {persons.map(person =>(
+          <tr key={person.name}>
+            <td>{person.name}</td>
+            <td>{person.number}</td>              
+          </tr> 
+            ))}
+      </tbody>
+    </table>
+  )
+}
+
 const App = () => {
     const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -71,7 +124,8 @@ const App = () => {
     setSearchTerm(event.target.value)
   }
     const personToShow = searchTerm === ''
-    ? persons : persons.filter(person=> {
+    ? persons 
+    : persons.filter(person=> {
       const nameMatch  = person.name.toLowerCase().includes(searchTerm.toLowerCase())
       const numberMatch = person.number.includes(searchTerm)
       
@@ -85,60 +139,24 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        Search by name or number: <input value={searchTerm} onChange ={handleSearchChange} placeholder='search'/>
-        
-      </div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          {/* required on nopeampi tapa saada tyhjästä kentästä ilmoitus vs alert!!! */}
-          name: <input type="text" value={newName} required="required" onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input  value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        
-        <div>
-          <button type="submit">add</button><button type="submit">delete</button>
-        </div>
-      </form>
-      {/*<div>debug name: {newName}</div>*/}
-      {/*<div>debug number: {newNumber}</div>*/}
+      <Filter
+      searchTerm={searchTerm}
+      handleSearchChange={handleSearchChange}
+      />
+      <h3>Add a new</h3>
+      <PersonForm
+      newName={newName}
+      newNumber={newNumber}
+      handleNameChange={handleNameChange}
+      handleNumberChange={handleNumberChange}
+      addPerson={addPerson}
+      />
       
-      <h2>Numbers</h2>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Number</th>
-              </tr>
-            </thead>
-            <tbody>
-              {personToShow.map(person =>(
-                <tr key={person.name}>
-                  <td>{person.name}</td>
-                  <td>{person.number}</td>              
-                </tr> 
-              ))}
-            </tbody>
-          </table>
-
-        </div>
-      {/*  
-      <ul>
-         {personToShow.map(person =>
-          <p key={person.name}>{person.name}, {''} {person.number}</p> 
-          )}
-      </ul>
-      */} 
-      
-      
-    </div>
-    
+      <h3>Numbers</h3>
+      <Persons persons={personToShow}/>
+    </div>   
   )
-
 }
 
 
