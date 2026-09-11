@@ -3,13 +3,8 @@ import App from './App'
 import axios from 'axios'
 
 
-const promise = axios.get('http://localhost:3001/notes')
-//console.log(promise)
 
-//tapahtumakuuntelija promiselle then-metodilla
-promise.then(response => {
-  console.log(response)
-})
+
 
 const notes = [
   {
@@ -30,7 +25,7 @@ const notes = [
 ]
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <App notes={notes} />
+  <App />
 )
 const result = notes.map(note => note.id)
 console.log(result)
