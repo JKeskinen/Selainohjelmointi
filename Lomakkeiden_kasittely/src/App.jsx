@@ -15,7 +15,7 @@ const App = () => {
   
   
 
-
+// Henkilön lisääminen puhelinluetteloon.
   const addPerson = (event) => {
     event.preventDefault()
     const nameExists = persons.some(
@@ -25,13 +25,25 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`)
         return
     }
+    // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
     const personObject = { name : newName, number : newNumber }
-    console.log('Person name: ', persons.map(p=> p.name), 'Person number: ', persons.map(s=> s.number))
+    //console.log('Person name: ', persons.map(p=> p.name), 'Person number: ', persons.map(s=> s.number))
+    // Tarkistus jos nimikenttä on tyhjä: tulee ponnahdusikkuna HUOMIO! Tarkista <form> required alempana! Nopeampi ratkaisu!
+    if (newName.trim() === ''){
+      window.alert('EMPTY NAME!')
+      return
+    }
+    // Lisää henkilö listaan
     setPersons(persons.concat(personObject))
+    // ilmoitus
+    window.alert(`${newName} : ${newNumber} added to phonebook`)
     setNewName('')
     setNewNumber('')
     
   }
+
+
+ 
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -41,7 +53,6 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
   }
@@ -50,9 +61,6 @@ const App = () => {
       const nameMatch  = person.name.toLowerCase().includes(searchTerm.toLowerCase())
       const numberMatch = person.number.includes(searchTerm)
       
-        if (nameMatch || numberMatch === 0){
-          
-        }
       return(
          nameMatch || numberMatch)
     })
@@ -64,30 +72,53 @@ const App = () => {
   return (
     <div>
       <div>
-        Search by name: <input value={searchTerm} onChange ={handleSearchChange} placeholder='search'/>
+        Search by name or number: <input value={searchTerm} onChange ={handleSearchChange} placeholder='search'/>
         
       </div>
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handleNameChange}/>
+          {/* required on nopeampi tapa saada tyhjästä kentästä ilmoitus vs alert!!! */}
+          name: <input type="text" value={newName} required="required" onChange={handleNameChange}/>
         </div>
         <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
+          number: <input  value={newNumber} onChange={handleNumberChange}/>
         </div>
+        
         <div>
-          <button type="submit">add</button>
+          <button type="submit">add</button><button type="submit">delete</button>
         </div>
       </form>
-      <div>debug name: {newName}</div>
-      <div>debug number: {newNumber}</div>
-      <h2>Numbers</h2>
-      <ul>
-        {personToShow.map(person =>
-          <p key={person.name}>{person.name}, {''} {person.number}</p> 
-        )}
+      {/*<div>debug name: {newName}</div>*/}
+      {/*<div>debug number: {newNumber}</div>*/}
       
+      <h2>Numbers</h2>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {personToShow.map(person =>(
+                <tr key={person.name}>
+                  <td>{person.name}</td>
+                  <td>{person.number}</td>              
+                </tr> 
+              ))}
+            </tbody>
+          </table>
+
+        </div>
+      {/*  
+      <ul>
+         {personToShow.map(person =>
+          <p key={person.name}>{person.name}, {''} {person.number}</p> 
+          )}
       </ul>
+      */} 
       
       
     </div>
