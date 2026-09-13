@@ -11,20 +11,13 @@ const App = () => {
     noteService
     .getAll()
     .then(initialNotes => {
+      console.log('promise fulfilled')
       setNotes(initialNotes)
     })
   }, [])
+  console.log('render', notes.length, 'notes')
 
-  const toggleImportanceOf = id => {
-    const note = notes.find(n => n.id === id)
-    const changedNote = { ...note, important: !note.important }
 
-    noteService
-      .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-      })
-  }
 
   const addNote = (event) => {
     event.preventDefault()
@@ -38,6 +31,22 @@ const App = () => {
         setNotes(notes.concat(returnedNote))
         setNewNote('')
       })
+  }
+
+  const toggleImportanceOf = id => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    noteService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+      })
+      .catch(error => {
+        console.error('Upadating note failed', error)
+        alert(`the note '${note.content}' was already deleted from server`)
+      setNotes(notes.filter(n => n.id !== id))
+    })
   }
 
   const handleNoteChange = (event) => {
