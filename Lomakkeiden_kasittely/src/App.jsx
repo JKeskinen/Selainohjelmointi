@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
-import { useState } from 'react'
 
 const Filter = ({searchTerm, handleSearchChange}) => (
   <div>
@@ -73,34 +74,30 @@ const App = () => {
   
   
  
-// Henkilön lisääminen puhelinluetteloon. ALKAA VANHA KOODI, TESTINÄ SERVER-PUOLI
+// Henkilön lisääminen puhelinluetteloon. 
+
   const addPerson = (event) => {
     event.preventDefault()
-
-    {/* 
-    //Jos kaavio on tyhjä, ilmoitus. Tämä kohta on turha, koska input required alempana
-    if (newName.trim() === ''){
-      window.alert('EMPTY NAME!')
-      return
-    }
-    // */}
 
     const nameExists = persons.some(
       person => person.name === newName
     )
-
-
-
 
     if (nameExists){
       window.alert(`${newName} is already added to phonebook`)
         return
     }
     // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
-    const personObject = { 
+    const personObject = {
       name : newName, 
-      number : newNumber 
+      number : newNumber
     }
+    
+      axios.post('http://localhost:3001/persons',personObject).then(response => {
+        console.log(response)
+      })
+    
+
 
     // Luodaan uusi lista kopioimalla nykyiset henkilöt ja lisäämällä uusi henkilö
     const newPersons = [...persons, personObject]
@@ -115,17 +112,7 @@ const App = () => {
     setNewName('')
     setNewNumber('')
   }
-  
-
-    axios
-    .post('http://localhost:3001/notes', noteObject)
-    .then(response => {
-      console.log(response)
-    })
-
-
-
-    
+     
   const handleNameChange = (event) => {
     setNewName(event.target.value)
     //console.log(event.target.value) 

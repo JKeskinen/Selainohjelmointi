@@ -73,9 +73,12 @@ const App = () => {
   
   
  
-// Henkilön lisääminen puhelinluetteloon. ALKAA VANHA KOODI, TESTINÄ SERVER-PUOLI
+// Henkilön lisääminen puhelinluetteloon. 
+
   const addPerson = (event) => {
     event.preventDefault()
+
+    
 
     {/* 
     //Jos kaavio on tyhjä, ilmoitus. Tämä kohta on turha, koska input required alempana
