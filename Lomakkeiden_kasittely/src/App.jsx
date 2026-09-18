@@ -39,8 +39,10 @@ const PersonForm = ({
     <button type='submit'>add</button>
   </form>
 )
-
-const Persons = ({persons}) => {
+// Ottaa vastaan 'person' ja 'deletePerson'-propsin ja palauttaa taulukon, 
+// joka renderöi jokaiselle henkilölle oman rivin ja poistonapin.
+const Persons = ({persons, deletePerson}) => {
+  //console.log('Type of deletePerson:', typeof deletePerson)
   return(
     <table>
       <tbody>
@@ -48,17 +50,21 @@ const Persons = ({persons}) => {
           <td><strong>NAME</strong></td>
           <td><strong>NUMBER</strong></td>
         </tr>
-        {persons.map(person =>(
+        {persons.map((person) =>(
           <tr key={person.name}>
             <td>{person.name}</td>
             <td>{person.number}</td>
-            <td><button onClick="windowButton">Delete</button> <pre id="log"></pre></td>              
+            <td>
+              <button onClick={() => deletePerson(person.id, person.name)}>Delete</button>
+              </td>              
           </tr> 
             ))}
       </tbody>
     </table>
   )
 }
+
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -78,16 +84,26 @@ const App = () => {
   },[])
   console.log("render", persons.length, "persons")
   
+  // Välittää 'handleDelete'-funktion 
+  // 'deletePerson'-propsina Persons-komponentille
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)){
+      axios
+      .delete(`http://localhost:3001/persons/${id}`)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+    }
  
-// Henkilön lisääminen puhelinluetteloon. 
+  }
 
+  // Henkilön lisääminen puhelinluetteloon. 
   const addPerson = (event) => {
     event.preventDefault()
 
     const nameExists = persons.some(
       person => person.name === newName
     )
-
     if (nameExists){
       window.alert(`${newName} is already added to phonebook`)
         return
@@ -95,15 +111,13 @@ const App = () => {
     // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
     const personObject = {
       name : newName, 
-      number : newNumber
+      number : newNumber 
     }
-    
       axios.post('http://localhost:3001/persons',personObject)
       .then(response => {
         console.log(response)
       })
     
-
 
     // Luodaan uusi lista kopioimalla nykyiset henkilöt ja lisäämällä uusi henkilö
     const newPersons = [...persons, personObject]
@@ -127,16 +141,6 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const personDelete = (id, name) => {
-    // TODO! Tee toimiva delete
-      if (window.confirm("Do you want to delete person: ${id}")){
-        window.open("https://google.com")
-
-      } else{
-        log.innerText = "He lives"
-      }
-    })
-  }
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
@@ -151,11 +155,8 @@ const App = () => {
          nameMatch || numberMatch)
     })
 
-
-    
-  
-      
-
+    // Main App return alkaa tästä--
+    // lisätty Persons deletePerson={handleDelete}
   return (
     <div>
       <h2>Phonebook</h2>
@@ -172,10 +173,12 @@ const App = () => {
       addPerson={addPerson}
       />
       <h3>Numbers</h3>
-      <Persons persons={personToShow}/>
+      <Persons
+      persons={personToShow}
+      deletePerson={handleDelete}/>
     </div>   
   )
-}
 
+}
 
 export default App
