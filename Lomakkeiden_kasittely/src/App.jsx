@@ -51,7 +51,8 @@ const Persons = ({persons}) => {
         {persons.map(person =>(
           <tr key={person.name}>
             <td>{person.name}</td>
-            <td>{person.number}</td>              
+            <td>{person.number}</td>
+            <td><button onClick="windowButton">Delete</button> <pre id="log"></pre></td>              
           </tr> 
             ))}
       </tbody>
@@ -126,7 +127,16 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const personDelete = (id, name) => {
+    // TODO! Tee toimiva delete
+      if (window.confirm("Do you want to delete person: ${id}")){
+        window.open("https://google.com")
 
+      } else{
+        log.innerText = "He lives"
+      }
+    })
+  }
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
@@ -141,7 +151,7 @@ const App = () => {
          nameMatch || numberMatch)
     })
 
-  
+
     
   
       

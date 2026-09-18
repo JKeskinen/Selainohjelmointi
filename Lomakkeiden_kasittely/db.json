@@ -29,6 +29,16 @@
       "name": "Mikko",
       "number": "040548512",
       "id": "k283Oww44Sw"
+    },
+    {
+      "name": "Kaveri",
+      "number": "112",
+      "id": "-NmDfj33qSw"
+    },
+    {
+      "name": "hoi",
+      "number": "112",
+      "id": "QKKEBsFG3r4"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
