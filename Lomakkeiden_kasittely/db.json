@@ -21,14 +21,9 @@
       "id": "4"
     },
     {
-      "name": "Mikko Mallikas",
-      "number": "040564721",
-      "id": "5tv4c2bHw4E"
-    },
-    {
-      "name": "Mikko",
-      "number": "040548512",
-      "id": "k283Oww44Sw"
+      "name": "a",
+      "number": "12345",
+      "id": "qjOkYcMr_gg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

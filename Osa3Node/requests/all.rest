@@ -1,0 +1,25 @@
+
+GET http://localhost:3001/
+###
+
+
+GET http://localhost:3001/api/notes/
+###
+
+
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    /// id tulee automaattisesti const generateId() -metodin kautta
+    "content": "VS code rest client",
+    "important": true
+}
+###
+
+
+DELETE http://localhost:3001/api/notes/5
+###
+
+
+

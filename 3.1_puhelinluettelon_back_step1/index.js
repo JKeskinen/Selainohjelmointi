@@ -37,7 +37,10 @@ app.get('/info', (req, res) => {
   `)
 })
 
-/// HUOMAA ETTÄ ` on eri kuin ' tai ""
+/// <br> -> rivinvaihto Ja HUOMIO, että 
+// tämä: ${persons} toimii vain template literalissa, 
+// eli backtick-merkkien ` sisällä — 
+// ei tavallisissa '-lainausmerkeissä.
 app.get('/api/persons', (req, res) => {
   res.send(
     persons.map(person =>
@@ -48,10 +51,7 @@ app.get('/api/persons', (req, res) => {
 
 
 /// RESPONSE.SEND ON HTML-pohjainen
-/// <br> -> rivinvaihto Ja HUOMIO, että 
-// tämä: ${persons} toimii vain template literalissa, 
-// eli backtick-merkkien ` sisällä — 
-// ei tavallisissa '-lainausmerkeissä.
+
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const note = persons.find(note => note.id === id)
