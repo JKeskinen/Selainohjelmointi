@@ -30,6 +30,13 @@ const persons = [
   }
 ]
 
+app.get('/', (req, res) => {
+  res.send(`
+    <p>Projektin juuri</p>
+    <p>${new Date()}</p>
+  `)
+})
+
 app.get('/info', (req, res) => {
   res.send(`
     <p>Henkilömäärä yhteensä ${persons.length}</p>
