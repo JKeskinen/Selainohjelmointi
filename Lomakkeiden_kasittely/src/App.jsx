@@ -51,7 +51,7 @@ const Persons = ({persons, deletePerson}) => {
           <td><strong>NUMBER</strong></td>
         </tr>
         {persons.map((person) =>(
-          <tr key={person.name}>
+          <tr key={person.id}>
             <td>{person.name}</td>
             <td>{person.number}</td>
             <td>
@@ -73,23 +73,22 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   
   
-  useEffect(() => {
-    console.log('effect')
-    axios
-    .get('http://localhost:3001/persons')
+useEffect(() => {
+  axios
+    .get('http://localhost:3001/api/persons')
     .then(response => {
-      console.log('promise fullfilled')
+      console.log(response.data)
+      console.log(Array.isArray(response.data.persons))
       setPersons(response.data)
     })
-  },[])
-  console.log("render", persons.length, "persons")
+}, [])
   
   // Välittää 'handleDelete'-funktion 
   // 'deletePerson'-propsina Persons-komponentille
   const handleDelete = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)){
       axios
-      .delete(`http://localhost:3001/persons/${id}`)
+      .delete(`http://localhost:3001/api/persons/${id}`)
       .then(() => {
         setPersons(persons.filter(p => p.id !== id))
       })
@@ -113,7 +112,7 @@ const App = () => {
       name : newName, 
       number : newNumber 
     }
-      axios.post('http://localhost:3001/persons',personObject)
+      axios.post('http://localhost:3001/api/persons',personObject)
       .then(response => {
         console.log(response)
       })
@@ -154,6 +153,8 @@ const App = () => {
       return(
          nameMatch || numberMatch)
     })
+  console.log(persons)
+  console.log(Array.isArray(persons))
 
     // Main App return alkaa tästä--
     // lisätty Persons deletePerson={handleDelete}
