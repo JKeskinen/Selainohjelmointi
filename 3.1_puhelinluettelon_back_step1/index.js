@@ -1,6 +1,9 @@
 const e = require('express')
 const express = require('express')
 const app = express()
+const cors = require('cors')
+
+app.use(cors())
 
 const persons = [
   {
@@ -29,6 +32,15 @@ const persons = [
     number: "24562462462"
   }
 ]
+  
+
+
+app.get('/', (req, res) => {
+  res.send(`
+    <p>Projektin juuri</p>
+    <p>${new Date()}</p>
+  `)
+})
 
 app.get('/info', (req, res) => {
   res.send(`
@@ -37,10 +49,26 @@ app.get('/info', (req, res) => {
   `)
 })
 
-/// <br> -> rivinvaihto Ja HUOMIO, että 
-// tämä: ${persons} toimii vain template literalissa, 
-// eli backtick-merkkien ` sisällä — 
-// ei tavallisissa '-lainausmerkeissä.
+app.get('/api/persons', (req, res) => {
+  res.json(persons)
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  const person = persons.find(person => person.id === id)
+  
+
+  if (!person) {
+    return res.status(404).json({
+      error: 'person not found'
+    })
+  }
+
+  persons = persons.filter(p => p.id !== id)
+  res.json(persons)
+})
+/*
+/// HUOMAA ETTÄ ` on eri kuin ' tai ""
 app.get('/api/persons', (req, res) => {
   res.send(
     persons.map(person =>
@@ -48,25 +76,45 @@ app.get('/api/persons', (req, res) => {
     ).join('<br><br>')
   )
 })
+*/
+
+
 
 
 /// RESPONSE.SEND ON HTML-pohjainen
 
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
-  const note = persons.find(note => note.id === id)
+  const person = persons.find(person => person.id === id)
 
-  if (!note) {
+  if (!person) {
     return response.status(404).json({
       error: 'person not found'
     })
   }
 
-  response.send(`
-    ${note.name}<br>
-    ${note.number}
-  `)
+  response.json(person)
 })
+/// RESPONSE.SEND ON HTML-pohjainen
+/// <br> -> rivinvaihto Ja HUOMIO, että 
+// tämä: ${persons} toimii vain template literalissa, 
+// eli backtick-merkkien ` sisällä — 
+// ei tavallisissa '-lainausmerkeissä.
+//app.get('/api/persons/:id', (req, res) => {
+//  const id = req.params.id
+//  const note = persons.find(person => person.id === id)
+//
+  //if (!note) {
+    //return res.status(404).json({
+      //error: 'person not found'
+//    })
+  //}
+
+//  res.send(`
+ //   ${note.name}<br>
+ //   ${note.number}
+ // `)
+//})
 
 app.listen(3001, () => {
   console.log('Server running on port 3001')

@@ -1,8 +1,69 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Persons from './components/Persons'
-import PersonForm from './components/PersonForm'
-import Filter from './components/Filter'
+
+
+const Filter = ({searchTerm, handleSearchChange}) => (
+  <div>
+    Search by name or number:
+    <input
+    value={searchTerm}
+    onChange={handleSearchChange}
+    placeholder='search'
+    />
+  </div>
+)
+
+const PersonForm = ({
+  newName,
+  newNumber,
+  handleNameChange,
+  handleNumberChange,
+  addPerson
+}) => (
+  <form onSubmit={addPerson}>
+    <div>
+      name:
+      <input
+      value={newName}
+      required
+      onChange={handleNameChange}
+      />
+    </div>
+    <div>
+      number:
+      <input
+      value={newNumber}
+      onChange={handleNumberChange}
+      />
+    </div>
+    <button type='submit'>add</button>
+  </form>
+)
+// Ottaa vastaan 'person' ja 'deletePerson'-propsin ja palauttaa taulukon, 
+// joka renderöi jokaiselle henkilölle oman rivin ja poistonapin.
+const Persons = ({persons, deletePerson}) => {
+  //console.log('Type of deletePerson:', typeof deletePerson)
+  return(
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>NAME</strong></td>
+          <td><strong>NUMBER</strong></td>
+        </tr>
+        {persons.map((person) =>(
+          <tr key={person.id}>
+            <td>{person.name}</td>
+            <td>{person.number}</td>
+            <td>
+              <button onClick={() => deletePerson(person.id, person.name)}>Delete</button>
+              </td>              
+          </tr> 
+            ))}
+      </tbody>
+    </table>
+  )
+}
+
 
 
 const App = () => {
@@ -13,16 +74,15 @@ const App = () => {
 
  
   
-  useEffect(() => {
-    console.log('effect')
-    axios
-    .get('http://localhost:3001/persons')
+useEffect(() => {
+  axios
+    .get('http://localhost:3001/api/persons')
     .then(response => {
-      console.log('promise fullfilled')
+      console.log(response.data)
+      console.log(Array.isArray(response.data.persons))
       setPersons(response.data)
     })
-  },[])
-  console.log("render", persons.length, "persons")
+}, [])
 
 
   
@@ -32,7 +92,7 @@ const App = () => {
     console.log('DELETE:', id, name)
     if (window.confirm(`Delete ${name} ?`)){
       axios
-      .delete(`http://localhost:3001/persons/${id}`)
+      .delete(`http://localhost:3001/api/persons/${id}`)
       .then(() => {
         setPersons(persons.filter(p => p.id !== id))
       })
@@ -77,9 +137,12 @@ const App = () => {
 
       return
     }
-
-    axios
-      .post('http://localhost:3001/persons', personObject)
+    // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
+    const personObject = {
+      name : newName, 
+      number : newNumber 
+    }
+      axios.post('http://localhost:3001/api/persons',personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')
@@ -99,6 +162,17 @@ const App = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
   }
+    const personToShow = searchTerm === ''
+    ? persons 
+    : persons.filter(person=> {
+      const nameMatch  = person.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const numberMatch = person.number.includes(searchTerm)
+      
+      return(
+         nameMatch || numberMatch)
+    })
+  console.log(persons)
+  console.log(Array.isArray(persons))
 
 
 
