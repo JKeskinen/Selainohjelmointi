@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 
-const Filter = ({searchTerm, handleSearchChange}) => (
+
+const Filter = ({ searchTerm, handleSearchChange }) => (
   <div>
     Search by name or number:
     <input
-    value={searchTerm}
-    onChange={handleSearchChange}
-    placeholder='search'
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder='search'
     />
   </div>
 )
@@ -138,10 +139,7 @@ useEffect(() => {
       return
     }
     // Luodaan henkilöolio, jonka nimi ja puhelinnumero saadaan tilamuuttujista
-    const personObject = {
-      name : newName, 
-      number : newNumber 
-    }
+
       axios.post('http://localhost:3001/api/persons',personObject)
       .then(response => {
         setPersons(persons.concat(response.data))
@@ -178,24 +176,33 @@ useEffect(() => {
 
     // Main App return alkaa tästä--
     // lisätty Persons deletePerson={handleDelete}
+
   return (
     <div>
       <h2>Phonebook</h2>
-        
+
+      <Filter
+        searchTerm={searchTerm}
+        handleSearchChange={handleSearchChange}
+      />
+
+      <h3>Add new</h3>
+
       <PersonForm
-          newName={newName}
-          newNumber={newNumber}
-          handleNameChange={handleNameChange}
-          handleNumberChange={handleNumberChange}
-          addPerson={addPerson}
-          persons={persons}
-          searchTerm={searchTerm}
-          handleSearchChange={handleSearchChange}
-          deletePerson={handleDelete}
-          
+        newName={newName}
+        newNumber={newNumber}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
+
+      <h3>Numbers</h3>
+
+      <Persons
+        persons={personToShow}
+        deletePerson={handleDelete}
       />
     </div>
- 
   )
 
 }

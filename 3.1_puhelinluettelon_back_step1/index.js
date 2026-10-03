@@ -1,39 +1,52 @@
-const e = require('express')
 const express = require('express')
-const app = express()
+const morgan = require('morgan')
 const cors = require('cors')
 
-app.use(cors())
 
-const persons = [
+
+morgan.token('body', req => 
+  JSON.stringify(req.body))
+
+const app = express()
+
+app.use(cors())
+app.use(express.json())
+
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
+
+let persons = [
   {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456"
+    id: '1',
+    name: 'Arto Hellas',
+    number: '040-123456'
   },
   {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523"
+    id: '2',
+    name: 'Ada Lovelace',
+    number: '39-44-5323523'
   },
-    {
-    id: "3",
-    name: "Dan Ibrow",
-    number: "354-44-5346212"
+  {
+    id: '3',
+    name: 'Dan Ibrow',
+    number: '354-44-5346212'
   },
-    {
-    id: "4",
-    name: "Mary Poppendick",
-    number: "46246324562"
+  {
+    id: '4',
+    name: 'Mary Poppendick',
+    number: '46246324562'
   },
-    {
-    id: "5",
-    name: "Kari Martti",
-    number: "24562462462"
+  {
+    id: '5',
+    name: 'Kari Martti',
+    number: '24562462462'
   }
 ]
-  
 
+const generateId = () => {
+  return String(Math.floor(Math.random() * 1000000))
+}
 
 app.get('/', (req, res) => {
   res.send(`
@@ -44,7 +57,7 @@ app.get('/', (req, res) => {
 
 app.get('/info', (req, res) => {
   res.send(`
-    <p>Henkilömäärä yhteensä ${persons.length}</p>
+    <p>Phonebook has info for ${persons.length} people</p>
     <p>${new Date()}</p>
   `)
 })
@@ -53,10 +66,12 @@ app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  const person = persons.find(person => person.id === id)
-  
+
+  const person = persons.find(
+    person => person.id === id
+  )
 
   if (!person) {
     return res.status(404).json({
@@ -64,58 +79,59 @@ app.delete('/api/persons/:id', (req, res) => {
     })
   }
 
-  persons = persons.filter(p => p.id !== id)
-  res.json(persons)
+  res.json(person)
 })
-/*
-/// HUOMAA ETTÄ ` on eri kuin ' tai ""
-app.get('/api/persons', (req, res) => {
-  res.send(
-    persons.map(person =>
-      `${person.name}<br>${person.number}`
-    ).join('<br><br>')
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+
+  persons = persons.filter(
+    person => person.id !== id
   )
+
+  res.status(204).end()
 })
-*/
 
+app.post('/api/persons', (req, res) => {
+  const body = req.body
 
-
-
-/// RESPONSE.SEND ON HTML-pohjainen
-
-app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = persons.find(person => person.id === id)
-
-  if (!person) {
-    return response.status(404).json({
-      error: 'person not found'
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: 'name or number missing'
     })
   }
 
-  response.json(person)
+  const existingPerson = persons.find(
+    person => person.name === body.name
+  )
+
+  if (existingPerson) {
+    return res.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number
+  }
+
+  persons = persons.concat(person)
+
+  res.json(person)
 })
-/// RESPONSE.SEND ON HTML-pohjainen
-/// <br> -> rivinvaihto Ja HUOMIO, että 
-// tämä: ${persons} toimii vain template literalissa, 
-// eli backtick-merkkien ` sisällä — 
-// ei tavallisissa '-lainausmerkeissä.
-//app.get('/api/persons/:id', (req, res) => {
-//  const id = req.params.id
-//  const note = persons.find(person => person.id === id)
-//
-  //if (!note) {
-    //return res.status(404).json({
-      //error: 'person not found'
-//    })
-  //}
 
-//  res.send(`
- //   ${note.name}<br>
- //   ${note.number}
- // `)
-//})
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
-app.listen(3001, () => {
-  console.log('Server running on port 3001')
+
+app.use(unknownEndpoint)
+
+
+const PORT = 3001
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
